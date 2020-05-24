@@ -1,42 +1,39 @@
-"use strict";
-
 document.addEventListener('DOMContentLoaded', () => {
 
-const tabsParent = document.querySelector('.tabheader__items'),
-      tabs = tabsParent.querySelectorAll('.tabheader__item'),
-      tabsContent = document.querySelectorAll('.tabcontent');
-          
-function hideTabsContent() {
-    tabsContent.forEach( content => {
-        content.style.display = 'none';
-    });
+    'use strict';
 
-    tabs.forEach( tab => {
-        tab.classList.remove('tabheader__item_active');
-    });
-}
+    const tabContent = document.querySelectorAll('.tabcontent'),
+        tabParent = document.querySelector('.tabheader__items'),
+        tab = tabParent.querySelectorAll('.tabheader__item');
 
-function showTabContent(i = 0) {
-    tabsContent[i].style.display = 'block';
-    tabs[i].classList.add('tabheader__item_active');
-}
+    function hideTabContent() {
+        tabContent.forEach((item) => {
+            item.style.display = 'none';
 
-hideTabsContent();
-showTabContent();
-
-
-tabsParent.addEventListener('click', (event) => {
-    const target = event.target;
-    
-    if ( target && target.classList.contains('tabheader__item') ) {
-       tabs.forEach((item, i) => {
-            if (target == item) {
-                hideTabsContent();
-                showTabContent(i);  
-            }
-       });
+        });
+        tab.forEach((item) => {
+            item.classList.remove('tabheader__item_active');
+        });
     }
+    hideTabContent();
 
-});
+    function showTabContent(i = 0) {
+        tabContent[i].style.display = 'block';
+        tab[i].classList.add('tabheader__item_active');
+    }
+    showTabContent();
+
+    tabParent.addEventListener('click', (event) => {
+        const target = event.target;
+
+        if (target && target.classList == 'tabheader__item') {
+            tab.forEach((item, i) => {
+                if (target == item) {
+                    hideTabContent();
+                    showTabContent(i);
+                }
+            });
+        }
+    });
 
 });
