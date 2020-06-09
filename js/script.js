@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     //////////////////Timer///////////////////////
 
-    const dateEnd = '2020-06-01';
+    const dateEnd = ('2020-07-02');
 
     function setTimer(dat) {
         const timerWorkTime = Date.parse(dat) - new Date(),
@@ -205,4 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'menu__item',
     ).createCard();
     
+
+
+
 });
