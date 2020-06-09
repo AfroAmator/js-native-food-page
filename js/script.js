@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function setTimer(dat) {
         const timerWorkTime = Date.parse(dat) - new Date(),
             days = Math.floor(timerWorkTime / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((timerWorkTime / (1000 * 60 * 60)) % 24),    
+            hours = Math.floor((timerWorkTime / (1000 * 60 * 60)) % 24),
             minutes = Math.floor(timerWorkTime / (1000 * 60) % 60),
             seconds = Math.floor((timerWorkTime / 1000) % 60);
 
@@ -95,18 +95,18 @@ document.addEventListener('DOMContentLoaded', () => {
     //////////////////////Modal////////////////////////////////
 
     const modalOpenTrigger = document.querySelectorAll('[data-modal]'),
-          modal = document.querySelector('.modal'),
-          modalCloseTrigger = document.querySelector('.modal__close');
+        modal = document.querySelector('.modal'),
+        modalCloseTrigger = document.querySelector('.modal__close');
 
- 
+
     function openModal() {
-        modal.style.display ='block';
+        modal.style.display = 'block';
         document.body.style.overflow = 'hidden';
         clearInterval(modalTimerId);
     }
- 
-    modalOpenTrigger.forEach( (item) => {
-        item.addEventListener('click',openModal);
+
+    modalOpenTrigger.forEach((item) => {
+        item.addEventListener('click', openModal);
     });
 
     function closeModal() {
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    const modalTimerId = setTimeout(openModal, 10000);
+    // const modalTimerId = setTimeout(openModal, 10000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -136,12 +136,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.removeEventListener('scroll', showModalByScroll);
         }
     }
-    
+
     window.addEventListener('scroll', showModalByScroll);
 
-     ///////////////////Classes/////////////////////////
+    ///////////////////Classes/////////////////////////
     class MenuCard {
-        constructor(img, alt, menu, describe, price, parentSelector, ...classes)  {
+        constructor(img, alt, menu, describe, price, parentSelector, ...classes) {
             this.img = img;
             this.alt = alt;
             this.menu = menu;
@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const elem = document.createElement('div');
 
             if (this.classes.length === 0) {
-                this.elem ='menu__item';
+                this.elem = 'menu__item';
                 elem.classList.add(this.elem);
             } else {
                 this.classes.forEach(className => elem.classList.add(className));
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
                     </div>
                 `;
-            this.parent.append(elem);    
+            this.parent.append(elem);
         }
     }
 
@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '.menu .container',
         'menu__item',
     ).createCard();
-  
+
     new MenuCard(
         "img/tabs/elite.jpg",
         'elite',
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '.menu .container',
         'menu__item',
     ).createCard();
-   
+
     new MenuCard(
         "img/tabs/post.jpg",
         'post',
@@ -204,8 +204,61 @@ document.addEventListener('DOMContentLoaded', () => {
         '.menu .container',
         'menu__item',
     ).createCard();
-    
+
+    /////////////////////request/////////////////////
 
 
+    const forms = document.querySelectorAll('form');
+
+    const massage = {
+        load: "loading",
+        succes: 'succes',
+        failure: 'fail',
+    };
+
+    forms.forEach(item => {
+        postData(item);
+    });
+
+    function postData(form) {
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+
+             const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status');
+            statusMessage.textContent = massage.load;
+            form.appendChild(statusMessage);
+
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+            request.setRequestHeader('Content-type', 'application/json');
+            const formData = new FormData(form);
+
+            const object = {};
+            formData.forEach((value, key) => {
+                object[key] = value;
+            });
+
+            const json = JSON.stringify(object);
+
+            request.send(json);
+
+            request.addEventListener('load', () => {
+                if (request.status === 200) {
+                    console.log(request.response);
+                    statusMessage.textContent = massage.succes;
+                    form.reset();
+                    setTimeout(() => {
+                        statusMessage.remove();
+                    }, 2000);
+                } else {
+                    statusMessage.textContent = massage.failure;
+                }
+            });
+
+        });
+
+
+    }
 
 });
