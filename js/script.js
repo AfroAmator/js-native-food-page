@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function hideTabContent() {
         tabContent.forEach((item) => {
-            item.style.display = 'none';
-
+            item.classList.add('hide');
+            item.classList.remove('show', 'fade');
         });
         tab.forEach((item) => {
             item.classList.remove('tabheader__item_active');
@@ -19,7 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
     hideTabContent();
 
     function showTabContent(i = 0) {
-        tabContent[i].style.display = 'block';
+        tabContent[i].classList.add('show', 'fade');
+        tabContent[i].classList.remove('hide');
         tab[i].classList.add('tabheader__item_active');
     }
     showTabContent();
@@ -95,8 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //////////////////////Modal////////////////////////////////
 
     const modalOpenTrigger = document.querySelectorAll('[data-modal]'),
-        modal = document.querySelector('.modal'),
-        modalCloseTrigger = document.querySelector('.modal__close');
+        modal = document.querySelector('.modal');
 
 
     function openModal() {
@@ -114,10 +114,8 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     }
 
-    modalCloseTrigger.addEventListener('click', closeModal);
-
     modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
+        if (event.target === modal || event.target.getAttribute('data-close') == '') {
             closeModal();
         }
     });
@@ -128,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // const modalTimerId = setTimeout(openModal, 10000);
+    const modalTimerId = setTimeout(openModal, 100000);
 
     function showModalByScroll() {
         if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight) {
@@ -211,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const forms = document.querySelectorAll('form');
 
     const massage = {
-        load: "loading",
+        load: 'img/formload/spinner.svg',
         succes: 'succes',
         failure: 'fail',
     };
@@ -224,10 +222,14 @@ document.addEventListener('DOMContentLoaded', () => {
         form.addEventListener('submit', (event) => {
             event.preventDefault();
 
-             const statusMessage = document.createElement('div');
-            statusMessage.classList.add('status');
-            statusMessage.textContent = massage.load;
+            const statusMessage = document.createElement('img');
+            statusMessage.src = massage.load;
+            statusMessage.style.cssText = `
+                display: block;
+                margin: 0 auto;
+            `;
             form.appendChild(statusMessage);
+            form.insertAdjacentElement('afterend', statusMessage);
 
             const request = new XMLHttpRequest();
             request.open('POST', 'server.php');
@@ -238,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
             formData.forEach((value, key) => {
                 object[key] = value;
             });
-
+ 
             const json = JSON.stringify(object);
 
             request.send(json);
@@ -246,19 +248,42 @@ document.addEventListener('DOMContentLoaded', () => {
             request.addEventListener('load', () => {
                 if (request.status === 200) {
                     console.log(request.response);
-                    statusMessage.textContent = massage.succes;
+                    showThanksModal(massage.succes);
                     form.reset();
-                    setTimeout(() => {
-                        statusMessage.remove();
-                    }, 2000);
+                    statusMessage.remove();
                 } else {
-                    statusMessage.textContent = massage.failure;
+                    showThanksModal(massage.failure);
                 }
             });
 
         });
 
 
+    }
+
+    function showThanksModal(message) {
+        const prevModalWindow = document.querySelector('.modal__dialog');
+
+        prevModalWindow.classList.add('hide');
+        openModal();
+
+        const newModalWindow = document.createElement('div');
+        newModalWindow.classList.add('modal__dialog');
+        newModalWindow.innerHTML = `
+            <div class="modal__content">
+                <div class="modal__close" data-close>×</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+        
+        document.querySelector('.modal').append(newModalWindow);
+        setTimeout(()=> {
+            newModalWindow.remove();
+            prevModalWindow.classList.add('show'); 
+            prevModalWindow.classList.remove('hide');
+            closeModal();
+
+        }, 1000);
     }
 
 });
