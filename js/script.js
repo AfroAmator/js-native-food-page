@@ -228,37 +228,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 display: block;
                 margin: 0 auto;
             `;
-            form.appendChild(statusMessage);
+
             form.insertAdjacentElement('afterend', statusMessage);
 
-            const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-            request.setRequestHeader('Content-type', 'application/json');
             const formData = new FormData(form);
-
+            
             const object = {};
             formData.forEach((value, key) => {
                 object[key] = value;
             });
- 
-            const json = JSON.stringify(object);
 
-            request.send(json);
-
-            request.addEventListener('load', () => {
-                if (request.status === 200) {
-                    console.log(request.response);
-                    showThanksModal(massage.succes);
-                    form.reset();
-                    statusMessage.remove();
-                } else {
-                    showThanksModal(massage.failure);
-                }
+            fetch('server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type': 'application/json'
+                },
+                body: JSON.stringify(object),
+            })
+            .then(data => data.text())
+            .then(data => {
+                console.log(data);
+                showThanksModal(massage.succes);
+                statusMessage.remove();
+            }).catch(() => {
+                showThanksModal(massage.failure);
+            }).finally(() => {
+                form.reset();
             });
 
+          
         });
-
-
     }
 
     function showThanksModal(message) {
@@ -283,7 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
             prevModalWindow.classList.remove('hide');
             closeModal();
 
-        }, 1000);
+        }, 4000);
     }
 
 });
