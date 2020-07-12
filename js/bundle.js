@@ -762,6 +762,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 document.addEventListener('DOMContentLoaded', function () {
   var modalTimerId = setTimeout(function () {
     return Object(_modules_modal__WEBPACK_IMPORTED_MODULE_2__["openModal"])('.modal', modalTimerId);
