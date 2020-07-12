@@ -1,3 +1,4 @@
+'use strict';
 import calculator from './modules/calculator';
 import cards from './modules/cards';
 import modal from './modules/modal';
